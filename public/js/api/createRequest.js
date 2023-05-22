@@ -1,3 +1,5 @@
+const { response } = require("express");
+
 /**
  * Основная функция для совершения запросов
  * на сервер.
@@ -19,14 +21,13 @@ const createRequest = (options = {}) => {
   }
 
   const xhr = new XMLHttpRequest;
-  let formData = null;
+  let url = new URL(options.url);
 
+  let formData = null;
   if (options.data) {
     if (options.method === 'GET') {
-      options.url += '?';
-      let i = 0;
       for (const [key, value] of Object.entries(options.data)) {
-        options.url += i === 0 ? '' : '&' + `${key}=${value}`;
+        url.searchParams.set(`${key}`, `${value}`);
       }
     } else {
       formData = new FormData();
@@ -36,7 +37,7 @@ const createRequest = (options = {}) => {
     }
   }
 
-  xhr.open(options.method, options.url);
+  xhr.open(options.method, url);
   xhr.setRequestHeader('Content-Type', 'json');
   if (formData) {
     xhr.send(formData);
@@ -44,4 +45,15 @@ const createRequest = (options = {}) => {
     xhr.send();
   }
 
+  xhr.addEventListener("load", event => {
+    if (xhr.status != 200) {
+      options.callback(`Ошибка ${xhr.status}: ${xhr.statusText}`, JSON.parse(xhr.response));
+      //options.callback(JSON.parse(xhr.response), "");
+    } else 
+      options.callback("", JSON.parse(xhr.response));
+    });
+
+  xhr.addEventListener("error", (event) => {
+    options.callback(`Ошибка ${xhr.status}: ${xhr.statusText}`, "");
+  });
 }
