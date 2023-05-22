@@ -1,4 +1,4 @@
-const { response } = require("express");
+//const { response } = require("express");
 
 /**
  * Основная функция для совершения запросов
@@ -37,23 +37,26 @@ const createRequest = (options = {}) => {
     }
   }
 
-  xhr.open(options.method, url);
-  xhr.setRequestHeader('Content-Type', 'json');
-  if (formData) {
-    xhr.send(formData);
-  } else {
-    xhr.send();
+  try {
+    xhr.open(options.method, url);
+    xhr.setRequestHeader('Content-Type', 'json');
+    if (formData) {
+      xhr.send(formData);
+    } else {
+      xhr.send();
+    }
+  } catch (e) {
+    console.error("Произошла ошибка: " + e);
   }
 
   xhr.addEventListener("load", event => {
     if (xhr.status != 200) {
-      options.callback(`Ошибка ${xhr.status}: ${xhr.statusText}`, JSON.parse(xhr.response));
-      //options.callback(JSON.parse(xhr.response), "");
-    } else 
-      options.callback("", JSON.parse(xhr.response));
-    });
+      options.callback({status: `${xhr.status}`, message: `${xhr.statusText}`}, null);
+    } else
+      options.callback(null, JSON.parse(xhr.response));
+  });
 
   xhr.addEventListener("error", (event) => {
-    options.callback(`Ошибка ${xhr.status}: ${xhr.statusText}`, "");
+    options.callback({status: `${xhr.status}`, message: `${xhr.statusText}`}, null);
   });
 }
