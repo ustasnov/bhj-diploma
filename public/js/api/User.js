@@ -4,12 +4,21 @@
  * Имеет свойство URL, равное '/user'.
  * */
 class User {
+
+  static URL = '/user';
+
   /**
    * Устанавливает текущего пользователя в
    * локальном хранилище.
    * */
   static setCurrent(user) {
-
+    try {
+      localStorage.setItem('user', JSON.stringify(user));
+    } catch (e) {
+      if (e == QUOTA_EXCEEDED_ERR) {
+        throw 'Превышен лимит выделенного пространства для локального хранилища!';
+      }
+    }
   }
 
   /**
@@ -17,7 +26,8 @@ class User {
    * пользователе из локального хранилища.
    * */
   static unsetCurrent() {
-
+    localStorage.removeItem('user');
+    App.getWidget('accounts').selectedAccount = null;
   }
 
   /**
@@ -25,7 +35,11 @@ class User {
    * из локального хранилища
    * */
   static current() {
-
+    const _user = localStorage.getItem('user');
+    if (_user) {
+      return JSON.parse(_user);
+    }
+    return undefined;
   }
 
   /**
@@ -33,7 +47,21 @@ class User {
    * авторизованном пользователе.
    * */
   static fetch(callback) {
-
+    const data = this.current();
+    if (data) {
+      createRequest({
+        url: this.URL + '/current',
+        method: 'GET',
+        responseType: 'json',
+        data,
+        callback: (err, response) => {
+          if (response && response.user) {
+            this.setCurrent(response.user);
+          }
+          callback(err, response);
+        }
+      });
+    }
   }
 
   /**
@@ -64,7 +92,18 @@ class User {
    * User.setCurrent.
    * */
   static register(data, callback) {
-
+    createRequest({
+      url: this.URL + '/register',
+      method: 'POST',
+      responseType: 'json',
+      data,
+      callback: (err, response) => {
+        if (response && response.user) {
+          this.setCurrent(response.user);
+        }
+        callback(err, response);
+      }
+    });
   }
 
   /**
@@ -72,6 +111,16 @@ class User {
    * выхода необходимо вызвать метод User.unsetCurrent
    * */
   static logout(callback) {
-
+    createRequest({
+      url: this.URL + '/logout',
+      method: 'POST',
+      responseType: 'json',
+      callback: (err, response) => {
+        if (response) {
+          this.unsetCurrent();
+        }
+        callback(err, response);
+      }
+    });
   }
 }

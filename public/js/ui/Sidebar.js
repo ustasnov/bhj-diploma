@@ -18,7 +18,18 @@ class Sidebar {
    * при нажатии на кнопку .sidebar-toggle
    * */
   static initToggleButton() {
-
+    const bodyElement = document.querySelector("body");
+    const toggleButton = document.querySelector(".sidebar-toggle");
+    toggleButton.addEventListener("click", event => {
+      event.preventDefault();
+      if (bodyElement.classList.contains("sidebar-open")) {
+        bodyElement.classList.remove("sidebar-open");
+        bodyElement.classList.remove("sidebar-collapse");
+      } else {
+        bodyElement.classList.add("sidebar-open");
+        bodyElement.classList.add("sidebar-collapse");
+      }
+    });
   }
 
   /**
@@ -31,11 +42,24 @@ class Sidebar {
   static initAuthLinks() {
     const menuItemLogin = document.querySelector(".menu-item_login").childNodes[1];
     menuItemLogin.addEventListener("click", event => {
+      event.preventDefault();
       App.getModal("login").open();
     });
-    const menuItemRegister = document.querySelector(".menu-item_registe").childNodes[1];
-    menuItemLogin.addEventListener("click", event => {
+
+    const menuItemRegister = document.querySelector(".menu-item_register").childNodes[1];
+    menuItemRegister.addEventListener("click", event => {
+      event.preventDefault();
       App.getModal("register").open();
-    }); 
+    });
+
+    const menuItemLogout = document.querySelector(".menu-item_logout").childNodes[1];
+    menuItemLogout.addEventListener("click", event => {
+      event.preventDefault();
+      User.logout((err, response) => {
+        if (response && response.success) {
+          App.setState('init');
+        }
+      });
+    });
   }
 }
