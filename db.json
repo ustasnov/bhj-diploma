@@ -5,12 +5,6 @@
       "email": "demo@demo",
       "password": "demo",
       "id": "1"
-    },
-    {
-      "name": "Станислав Угаров",
-      "email": "ustasnov@gmail.com",
-      "password": "generator",
-      "id": "12oh3fv8li1rieux"
     }
   ],
   "accounts": [
@@ -165,33 +159,6 @@
       "sum": 300000,
       "type": "expense",
       "user_id": "1"
-    },
-    {
-      "id": "12oh3w8li71hup2",
-      "type": "income",
-      "name": "Аванс",
-      "sum": 40000,
-      "account_id": "12oh3wvoli71g45y",
-      "user_id": "12oh3fv8li1rieux",
-      "created_at": "2023-05-28T06:28:23.845Z"
-    },
-    {
-      "id": "12oh3618li71jkil",
-      "type": "income",
-      "name": "Аванс",
-      "sum": 40000,
-      "account_id": "12oh3wvoli71g45y",
-      "user_id": "12oh3fv8li1rieux",
-      "created_at": "2023-05-28T06:29:43.964Z"
-    },
-    {
-      "id": "12oh397kli71q17m",
-      "type": "income",
-      "name": "Аванс",
-      "sum": 40000,
-      "account_id": "12oh3g08li71hamp",
-      "user_id": "12oh3fv8li1rieux",
-      "created_at": "2023-05-28T06:34:45.537Z"
-    }
+    }    
   ]
 }
