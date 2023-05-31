@@ -115,24 +115,20 @@ class TransactionsPage {
   render(options) {
     if (options) {
       this.lastOptions = options;
-      Account.get(options.account_id, (err, response) => {
-        if (err) {
-          alert(`${err.status} - ${err.message}`);
-          return;
-        } else {
-          if (response) {
-            if (response.success) {
-              this.renderTitle(response.data.name);
-            } else {
-              alert(response.error);
+      Account.get(options.account_id, (e, resp) => {
+          if (e) {
+            console.error(`${e.status} - ${e.message}`);
+          }
+          if (resp && !resp.success) {
+              console.error(resp.error);
+          }
+        if (resp.data) {
+          this.renderTitle(resp.data.name);
+          Transaction.list({ account_id: resp.data.id }, (err, response) => {
+            if (err) {
+              alert(`${err.status} - ${err.message}`);
               return;
             }
-          }
-        }
-        Transaction.list({ account_id: response.data.id }, (err, response) => {
-          if (err) {
-            alert(`${err.status} - ${err.message}`);
-          } else {
             if (response) {
               if (response.success) {
                 this.renderTransactions(response.data);
@@ -141,8 +137,8 @@ class TransactionsPage {
                 alert(response.error);
               }
             }
-          }
-        });
+          });
+        }
       });
     }
   }
